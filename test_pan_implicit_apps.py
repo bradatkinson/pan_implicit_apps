@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+
+import pytest
+import pan_implicit_apps
+import xml.etree.ElementTree as ET
+
+
+def test_process_implicit_apps_1():
+    xml = (
+        '<response status="success">'
+        '<result>'
+        '<entry id="781" name="2ch-base" ori_country="USA" ori_language="English">'
+        '<ottawa-name>2ch</ottawa-name>'
+        '<category>collaboration</category>'
+        '<subcategory>social-networking</subcategory>'
+        '<technology>browser-based</technology>'
+        '<description>2channel is a Japanese Internet forum, thought to be the largest Internet forum in the world. Launched in 1999, it has gained significant influence in Japanese society, comparable to that of traditional mass media such as television, radio, and magazines.</description>'
+        '<appident>yes</appident>'
+        '<virus-ident>yes</virus-ident>'
+        '<vulnerability-ident>yes</vulnerability-ident>'
+        '<evasive-behavior>no</evasive-behavior>'
+        '<consume-big-bandwidth>no</consume-big-bandwidth>'
+        '<used-by-malware>no</used-by-malware>'
+        '<able-to-transfer-file>no</able-to-transfer-file>'
+        '<has-known-vulnerability>yes</has-known-vulnerability>'
+        '<tunnel-other-application>no</tunnel-other-application>'
+        '<prone-to-misuse>no</prone-to-misuse>'
+        '<pervasive-use>yes</pervasive-use>'
+        '<per-direction-regex>no</per-direction-regex>'
+        '<deny-action>drop-reset</deny-action>'
+        '<cachable>no</cachable>'
+        '<tag minver="9.1.0">'
+        '<member>[Web App]</member>'
+        '</tag>'
+        '<references>'
+        '<entry name="Japanese wikipedia">'
+        '<link>http://ja.wikipedia.org/wiki/2%E3%81%A1%E3%82%83%E3%82%93%E3%81%AD%E3%82%8B</link>'
+        '</entry>'
+        '<entry name="wikipedia">'
+        '<link>http://en.wikipedia.org/wiki/2ch</link>'
+        '</entry>'
+        '</references>'
+        '<default>'
+        '<port>'
+        '<member>tcp/80,443</member>'
+        '</port>'
+        '</default>'
+        '<use-applications>'
+        '<member>ssl</member>'
+        '<member>web-browsing</member>'
+        '</use-applications>'
+        '<tunnel-applications>'
+        '<member>2ch-posting</member>'
+        '</tunnel-applications>'
+        '<implicit-use-applications>'
+        '<member>ssl</member>'
+        '<member>web-browsing</member>'
+        '</implicit-use-applications>'
+        '<applicable-decoders>'
+        '<member>http</member>'
+        '</applicable-decoders>'
+        '<risk>2</risk>'
+        '<application-container>2ch</application-container>'
+        '</entry>'
+        '</result>'
+        '</response>'
+    )
+    tree = ET.ElementTree(ET.fromstring(xml))
+    expected = ['ssl', 'web-browsing']
+    actual = pan_implicit_apps.process_implicit_apps(tree)
+    assert expected == actual
+
+
+def test_process_implicit_apps_2():
+    xml = (
+        '<response status="success">'
+        '<result>'
+        '<entry id="37" name="ssh" ori_country="USA" ori_language="English">'
+        '<category>networking</category>'
+        '<subcategory>encrypted-tunnel</subcategory>'
+        '<technology>client-server</technology>'
+        '<description>Secure Shell is a set of standards and an associated network protocol that allows establishing a secure channel between a local and a remote computer.</description>'
+        '<analysis>SSH is commonly used by IT to establish a protected connection to another corporate machine for purposes of remote management. SSH has been known to be used by knowledgeable end-users to access their home machines (or other machines) and use those remote machines for non-work related activities. To be fair, SSH is a commonly-used IT tool and it is difficult to determine how it is being used in every organization. With SSH, a user can easily bypass existing controls in an encrypted tunnel.</analysis>'
+        '<alg>yes</alg>'
+        '<appident>yes</appident>'
+        '<vulnerability-ident>yes</vulnerability-ident>'
+        '<evasive-behavior>no</evasive-behavior>'
+        '<consume-big-bandwidth>no</consume-big-bandwidth>'
+        '<used-by-malware>yes</used-by-malware>'
+        '<able-to-transfer-file>yes</able-to-transfer-file>'
+        '<has-known-vulnerability>yes</has-known-vulnerability>'
+        '<tunnel-other-application>yes</tunnel-other-application>'
+        '<prone-to-misuse>no</prone-to-misuse>'
+        '<pervasive-use>yes</pervasive-use>'
+        '<per-direction-regex>no</per-direction-regex>'
+        '<decode>ssh</decode>'
+        '<cachable>yes</cachable>'
+        '<references>'
+        '<entry name="Wikipedia">'
+        '<link>http://en.wikipedia.org/wiki/Secure_Shell</link>'
+        '</entry>'
+        '</references>'
+        '<default>'
+        '<port>'
+        '<member>tcp/22</member>'
+        '</port>'
+        '</default>'
+        '<tunnel-applications minver="3.1.0">'
+        '<member minver="5.0.0">enhanced-file-transfer</member>'
+        '<member minver="3.1.0">github-base</member>'
+        '</tunnel-applications>'
+        '<risk>4</risk>'
+        '</entry>'
+        '</result>'
+        '</response>'
+    )
+    tree = ET.ElementTree(ET.fromstring(xml))
+    expected = []
+    actual = pan_implicit_apps.process_implicit_apps(tree)
+    assert expected == actual
